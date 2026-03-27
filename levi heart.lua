@@ -1,6 +1,6 @@
 local username = game.Players.LocalPlayer.Name
 
-if username == "cutevidai" or username == "baohan_200" then
+if username == "XxSparkC0dexX2003" or username == "baohan_200" then
     getgenv().Config = {
         ["Shoot Heart When Ice Spike Breaks"] = true,
         ["Drive Boat To Tiki"] = true,
@@ -65,7 +65,7 @@ else
 	["Ping Discord"] = false,
 	["Use New  Method Drive"] = false,
 	["Drive Boat To Hydra"] = false,
-	["Select Owner Boat Beast Hunter"] = "baohan_200",
+	["Select Owner Boat Beast Hunter"] = "XxSparkC0dexX2003",
 	["Auto Craft Scroll"] = false,
 	["Account Buy Boat"] = false,
 	["Auto Store Fruit"] = false,
