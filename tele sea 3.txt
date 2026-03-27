@@ -1,0 +1,33 @@
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer:FindFirstChild("DataLoaded")
+wait(3)
+
+local seaIds = {
+    [2753915549] = 1,
+    [4442272183] = 2,
+    [7449423635] = 3
+}
+
+local seaTravelCommands = {
+    [1] = "TravelMain",       -- Sea 2 → Sea 1
+    [2] = "TravelDressrosa",  -- Sea 1 → Sea 2
+    [3] = "TravelZou"         -- Sea 2 → Sea 3
+}
+
+local function getSea()
+    return seaIds[game.PlaceId]
+end
+
+-- đổi số này để chọn Sea muốn tới (1,2,3)
+local targetSea = 3
+
+while true do
+    if getSea() ~= targetSea then
+        local command = seaTravelCommands[targetSea]
+        if command then
+            pcall(game:GetService("ReplicatedStorage").Remotes.CommF_.InvokeServer,
+                  game:GetService("ReplicatedStorage").Remotes.CommF_,
+                  command)
+        end
+    end
+    wait(3) -- lặp lại mỗi 3s
+end

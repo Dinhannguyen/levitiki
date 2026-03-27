@@ -1,0 +1,76 @@
+local SAVE_FOLDER = "." -- hoặc đường dẫn bạn muốn
+local CHECK_INTERVAL = 1 -- giây
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+
+-- Đọc danh sách username từ main.json
+local skipUsernames = {}
+local function loadSkipUsernames()
+    if readfile then
+        local ok, content = pcall(readfile, "main.json")
+        if ok and content then
+            local success, data = pcall(function() return game:GetService("HttpService"):JSONDecode(content) end)
+            if success and type(data) == "table" then
+                for _, entry in ipairs(data) do
+                    if entry.username then
+                        skipUsernames[entry.username] = true
+                    end
+                end
+            end
+        end
+    end
+end
+
+loadSkipUsernames()
+
+-- Nếu username hiện tại nằm trong danh sách, không chạy script
+if player and skipUsernames[player.Name] then
+    return
+end
+
+-- helper: safe writefile
+local function safeWriteFile(path, content)
+    local ok, err = pcall(function()
+        if writefile then
+            writefile(path, content)
+        end
+    end)
+    return ok
+end
+
+-- helper: lấy danh sách item trong inventory
+local function getInventoryItems()
+    local itemList = {}
+    local success, result = pcall(function()
+        if ReplicatedStorage and ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("CommF_") then
+            local remote = ReplicatedStorage.Remotes.CommF_
+            if remote and remote.InvokeServer then
+                return remote:InvokeServer("getInventory")
+            end
+        end
+        return nil
+    end)
+    if success and typeof(result) == "table" then
+        for _, item in ipairs(result) do
+            if item and item.Name then
+                table.insert(itemList, item.Name)
+            end
+        end
+    end
+    return itemList
+end
+
+-- kiểm tra liên tục
+while true do
+    local items = getInventoryItems()
+    for _, itemName in ipairs(items) do
+        if itemName == "Leviathan Heart" then
+            local filePath = SAVE_FOLDER .. "/" .. (player and player.Name or "unknown") .. "zan.txt"
+            safeWriteFile(filePath, "zan-tim")
+            -- break -- XÓA dòng này để gửi lặp lại liên tục
+        end
+    end
+    task.wait(CHECK_INTERVAL)
+end

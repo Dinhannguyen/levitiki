@@ -1,0 +1,15 @@
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+wait(10) -- Đợi thêm 4 giây sau khi game đã load
+
+local preferredTeam = "Marines" -- Đổi thành "Pirates" nếu muốn
+local player = game.Players.LocalPlayer
+local remote = game:GetService("ReplicatedStorage").Remotes.CommF_
+
+spawn(function()
+    while true do
+        if not player.Team or player.Team.Name ~= preferredTeam then
+            remote:InvokeServer("SetTeam", preferredTeam)
+        end
+        wait(2)
+    end
+end)
